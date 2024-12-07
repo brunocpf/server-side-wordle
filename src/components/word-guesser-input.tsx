@@ -11,8 +11,7 @@ export function WordGuesserInput({ length, word }: WordGuesserInputProps) {
       {Array.from({ length }, (_, i) => (
         <div key={i}>
           <div
-            key={word[i]}
-            className="bg-red-200 w-10 h-10 animate-[scale_0.5s_ease-in-out] grid place-items-center rounded-md border-2 border-red-400"
+            className={`dark:bg-zinc-400 dark:border-zinc-100 bg-zinc-100 border-zinc-400 w-10 h-10 grid place-items-center rounded-md border-2 ${word[i] ? "animate-[scale_0.5s_ease-in-out]" : ""}`}
           >
             {word[i]}
           </div>
@@ -20,14 +19,8 @@ export function WordGuesserInput({ length, word }: WordGuesserInputProps) {
       ))}
       <style jsx>{`
         @keyframes scale {
-          0% {
-            transform: scale(1);
-          }
           50% {
             transform: scale(1.25);
-          }
-          100% {
-            transform: scale(1);
           }
         }
       `}</style>

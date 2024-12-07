@@ -33,8 +33,15 @@ export function useWordInput({
     };
   }, [backspacePressed]);
 
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === "Backspace") {
+      setWord((text) => text.slice(0, -1));
+      setBackspacePressed(true);
+    }
+  }, []);
+
   const handleKeyUp = useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
+    (event: KeyboardEvent) => {
       if (event.key === "Backspace") {
         setBackspacePressed(false);
       }
@@ -71,19 +78,14 @@ export function useWordInput({
     [length, onEnter, onWordOverflow, word],
   );
 
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Backspace") {
-        setWord((text) => text.slice(0, -1));
-        setBackspacePressed(true);
-      }
-    },
-    [],
-  );
+  const reset = useCallback(() => {
+    setWord("");
+  }, []);
 
   return {
     word,
-    handleKeyUp,
+    reset,
     handleKeyDown,
+    handleKeyUp,
   };
 }

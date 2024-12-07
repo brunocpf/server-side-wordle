@@ -1,9 +1,12 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useState } from "react";
 
+import { Card } from "@/components/ui/card";
 import { WordGuesserInput } from "@/components/word-guesser-input";
 import { useWordInput } from "@/lib/use-guess-input";
+
+const NUMBER_OF_ATTEMPTS = 6;
 
 export function WordGuesser({}: Readonly<{
   checkGuess: (guess: string) => Promise<
@@ -16,38 +19,50 @@ export function WordGuesser({}: Readonly<{
       }
   >;
 }>) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const { word, handleKeyUp, handleKeyDown } = useWordInput({
+  const [guesses, setGuesses] = useState<string[]>([]);
+
+  const { word, handleKeyDown, handleKeyUp, reset } = useWordInput({
     length: 5,
-    onEnter: (w) => console.log(w),
+    onEnter: (w) => {
+      if (w.length !== 5) {
+        return;
+      }
+
+      if (guesses.length + 1 >= NUMBER_OF_ATTEMPTS) {
+        setGuesses([]);
+      } else {
+        setGuesses((g) => [...g, w]);
+      }
+      reset();
+    },
   });
 
-  return (
-    <div
-      ref={containerRef}
-      onKeyUp={handleKeyUp}
-      onKeyDown={handleKeyDown}
-      tabIndex={0}
-      autoFocus
-      onBlur={(event) => {
-        if (
-          !(
-            event.relatedTarget instanceof Node &&
-            containerRef.current instanceof Node &&
-            containerRef.current.contains(event.relatedTarget)
-          )
-        ) {
-          containerRef.current?.focus();
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
 
-          return;
-        }
-      }}
-      className="p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 focus:outline-none"
-    >
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [handleKeyDown, handleKeyUp]);
+
+  return (
+    <Card className="focus:outline-none p-3">
       <h1 className="text-4xl font-bold">Guess the Word</h1>
-      <section className="p-2">
-        <WordGuesserInput length={5} word={word} />
+      <section className="p-2 flex flex-col gap-3 items-center">
+        {Array.from({ length: NUMBER_OF_ATTEMPTS }, (_, i) => {
+          if (i < guesses.length) {
+            return <WordGuesserInput key={i} length={5} word={guesses[i]} />;
+          }
+
+          if (i > guesses.length) {
+            return <WordGuesserInput key={i} length={5} word="" />;
+          }
+
+          return <WordGuesserInput key={i} length={5} word={word} />;
+        })}
       </section>
-    </div>
+    </Card>
   );
 }
