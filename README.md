@@ -1,3 +1,5 @@
+[Demo](https://server-side-wordle.vercel.app/)
+
 This is an experiment of a Wordle-like clone that validates the user input on the server side (unlike the official Wordle implementation, which is mostly implemented client side) using the Next.js app router and server actions.
 
 This app uses [RazorSh4rk's Random Word API](RazorSh4rk/random-word-api/) to fetch a list of words and determine the word of the day.

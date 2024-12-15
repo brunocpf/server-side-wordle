@@ -1,4 +1,4 @@
-import { CharMatch } from "./match-word";
+import { CharMatch } from "@/lib/match-word";
 
 const emojis = {
   yes: "🟩",
@@ -19,19 +19,19 @@ export async function shareGuessAttempts(
 
   const guessesText = formattedGuesses.join("\n");
 
-  const shareText = `I ${
-    wasSuccessful ? "won" : "lost"
-  } the word of the day challenge! Here are my guesses: \n${guessesText}`;
+  const shareData: ShareData = {
+    title: "Word of the day game",
+    text: `I ${
+      wasSuccessful ? "won" : "lost"
+    } the word of the day challenge! Here are my guesses: \n${guessesText}`,
+    url: window.location.href,
+  } as const;
 
-  if (!navigator.canShare()) {
-    await navigator.clipboard.writeText(shareText);
+  if (!navigator.canShare(shareData)) {
+    await navigator.clipboard.writeText(shareData.text ?? "");
     alert("Copied to clipboard!");
     return;
   }
 
-  navigator.share({
-    title: "Word of the day game",
-    text: shareText,
-    url: window.location.href,
-  });
+  navigator.share(shareData);
 }
