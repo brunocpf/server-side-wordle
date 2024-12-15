@@ -1,29 +1,37 @@
 "use client";
 
+import { WordGuesserInputCharacter } from "@/components/word-guesser-input-character";
+import { CharMatch } from "@/lib/match-word";
+import { cn } from "@/lib/utils";
+
 export interface WordGuesserInputProps {
   length: number;
-  word: string;
+  guessResult?: CharMatch[];
+  value?: string;
+  active?: boolean;
 }
 
-export function WordGuesserInput({ length, word }: WordGuesserInputProps) {
+export function WordGuesserInput({
+  length,
+  value,
+  guessResult,
+  active,
+}: WordGuesserInputProps) {
   return (
-    <form className="flex gap-2">
+    <form
+      className={cn("flex gap-1 rounded-lg border-2 border-transparent p-1", {
+        "border-gray-400 bg-gray-200 dark:border-gray-200 dark:bg-gray-800":
+          active,
+      })}
+    >
       {Array.from({ length }, (_, i) => (
-        <div key={i}>
-          <div
-            className={`dark:bg-zinc-400 dark:border-zinc-100 bg-zinc-100 border-zinc-400 w-10 h-10 grid place-items-center rounded-md border-2 ${word[i] ? "animate-[scale_0.5s_ease-in-out]" : ""}`}
-          >
-            {word[i]}
-          </div>
-        </div>
+        <WordGuesserInputCharacter
+          key={i}
+          value={value?.[i] ?? ""}
+          match={guessResult?.[i]}
+          index={i}
+        />
       ))}
-      <style jsx>{`
-        @keyframes scale {
-          50% {
-            transform: scale(1.25);
-          }
-        }
-      `}</style>
     </form>
   );
 }

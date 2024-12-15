@@ -12,6 +12,7 @@ export function useWordInput({
   onWordOverflow,
 }: UseWordInputProps) {
   const [word, setWord] = useState("");
+  const [disabled, setDisabled] = useState(false);
   const [backspacePressed, setBackspacePressed] = useState(false);
 
   useEffect(() => {
@@ -33,15 +34,22 @@ export function useWordInput({
     };
   }, [backspacePressed]);
 
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.key === "Backspace") {
-      setWord((text) => text.slice(0, -1));
-      setBackspacePressed(true);
-    }
-  }, []);
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (disabled) return;
+
+      if (event.key === "Backspace") {
+        setWord((text) => text.slice(0, -1));
+        setBackspacePressed(true);
+      }
+    },
+    [disabled],
+  );
 
   const handleKeyUp = useCallback(
     (event: KeyboardEvent) => {
+      if (disabled) return;
+
       if (event.key === "Backspace") {
         setBackspacePressed(false);
       }
@@ -75,7 +83,7 @@ export function useWordInput({
         event.preventDefault();
       }
     },
-    [length, onEnter, onWordOverflow, word],
+    [disabled, length, onEnter, onWordOverflow, word],
   );
 
   const reset = useCallback(() => {
@@ -85,6 +93,7 @@ export function useWordInput({
   return {
     word,
     reset,
+    setDisabled,
     handleKeyDown,
     handleKeyUp,
   };
