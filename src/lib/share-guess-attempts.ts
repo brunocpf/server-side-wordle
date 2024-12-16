@@ -23,7 +23,7 @@ export async function shareGuessAttempts(
     title: "Word of the day game",
     text: `I ${
       wasSuccessful ? "won" : "lost"
-    } the word of the day challenge! Here are my guesses: \n${guessesText}`,
+    } the word of the day challenge! Here are my guesses: \n${guessesText}\n\n`,
     url: window.location.href,
   } as const;
 
