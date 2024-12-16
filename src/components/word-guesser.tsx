@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   AlertDialog,
@@ -34,6 +34,7 @@ export function WordGuesser({
   >;
 }>) {
   const { toast } = useToast();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [guesses, setGuesses] = useState<
     {
@@ -76,12 +77,14 @@ export function WordGuesser({
         reset();
 
         if (result.matches.every((m) => m === "yes")) {
+          inputRef.current?.blur();
           setGameState("won");
           setDisabled(true);
           return;
         }
 
         if (guesses.length >= NUMBER_OF_ATTEMPTS - 1) {
+          inputRef.current?.blur();
           setGameState("lost");
           setDisabled(true);
         }
@@ -100,9 +103,23 @@ export function WordGuesser({
   }, [handleKeyDown, handleKeyUp]);
 
   return (
-    <Card className="p-3 focus:outline-none">
+    <Card
+      className="p-3 focus:outline-none"
+      onClick={() => {
+        if (gameState === "playing") inputRef.current?.focus();
+      }}
+    >
       <h1 className="text-4xl font-bold">Guess the Word</h1>
       <section className="flex flex-col items-center gap-1 p-2">
+        <input
+          type="text"
+          className="h-0 opacity-0"
+          ref={inputRef}
+          onChange={(e) => {
+            e.preventDefault();
+            e.target.value = "";
+          }}
+        />
         {Array.from({ length: NUMBER_OF_ATTEMPTS }, (_, i) => (
           <div
             key={i}
@@ -131,7 +148,6 @@ export function WordGuesser({
           </div>
         ))}
       </section>
-
       <AlertDialog open={gameState !== "playing"}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -141,7 +157,7 @@ export function WordGuesser({
             <AlertDialogDescription>
               {gameState === "lost"
                 ? "You have used all your attempts. Refresh the page to play again."
-                : "You guesses the word correctly. Come back tomorrow for a new word."}
+                : "You guessed the word correctly. Come back tomorrow for a new word."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

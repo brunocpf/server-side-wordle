@@ -1,6 +1,8 @@
 export type CharMatch = "no" | "yes" | "close";
 
 export function matchWord(word: string, textToMatch: string) {
+  word = word.toLowerCase();
+  textToMatch = textToMatch.toLowerCase();
   const countPerCharacter = word
     .split("")
     .reduce<Record<string, number>>((acc, char) => {

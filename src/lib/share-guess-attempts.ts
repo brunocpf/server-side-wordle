@@ -27,7 +27,7 @@ export async function shareGuessAttempts(
     url: window.location.href,
   } as const;
 
-  if (!navigator.canShare(shareData)) {
+  if (!navigator?.canShare?.(shareData)) {
     await navigator.clipboard.writeText(shareData.text ?? "");
     alert("Copied to clipboard!");
     return;
