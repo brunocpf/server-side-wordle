@@ -6,6 +6,9 @@ interface UseWordInputProps {
   onWordOverflow?: (word: string) => void;
 }
 
+export const DELETE_KEY = "<DELETE>";
+export const ENTER_KEY = "<ENTER>";
+
 export function useWordInput({
   length,
   onEnter,
@@ -50,11 +53,15 @@ export function useWordInput({
     (event: KeyboardEvent) => {
       if (disabled) return;
 
-      if (event.key === "Backspace") {
+      if (event.key === DELETE_KEY) {
+        setWord((text) => text.slice(0, -1));
+      }
+
+      if (event.key.toLowerCase() === "backspace") {
         setBackspacePressed(false);
       }
 
-      if (event.key === "Enter") {
+      if (event.key.toLowerCase() === "enter" || event.key === ENTER_KEY) {
         onEnter?.(word);
       }
 

@@ -1,15 +1,27 @@
 import { checkGuess } from "@/actions/check-guess";
 import { WordGuesser } from "@/components/word-guesser";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string | string[] }>;
+}) {
+  const { date: dateParam } = await searchParams;
+
   async function checkGuessToday(guess: string) {
     "use server";
-    return checkGuess(new Date(), guess);
+    let date = dateParam ? new Date(dateParam.toString()) : new Date();
+
+    if (isNaN(date.getTime())) {
+      date = new Date();
+    }
+
+    return checkGuess(date, guess);
   }
 
   return (
-    <div className="grid h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-[family-name:var(--font-geist-sans)] sm:p-20">
-      <main className="row-start-2 flex flex-col items-center gap-8 sm:items-start">
+    <div className="grid h-screen place-items-center font-[family-name:var(--font-geist-sans)]">
+      <main className="flex touch-manipulation flex-col items-center justify-center gap-4">
         <WordGuesser checkGuess={checkGuessToday} />
       </main>
     </div>

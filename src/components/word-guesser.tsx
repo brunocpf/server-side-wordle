@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
+import { CustomKeyboard } from "@/components/custom-keyboard";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -34,7 +35,6 @@ export function WordGuesser({
   >;
 }>) {
   const { toast } = useToast();
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const [guesses, setGuesses] = useState<
     {
@@ -77,14 +77,12 @@ export function WordGuesser({
         reset();
 
         if (result.matches.every((m) => m === "yes")) {
-          inputRef.current?.blur();
           setGameState("won");
           setDisabled(true);
           return;
         }
 
         if (guesses.length >= NUMBER_OF_ATTEMPTS - 1) {
-          inputRef.current?.blur();
           setGameState("lost");
           setDisabled(true);
         }
@@ -103,73 +101,63 @@ export function WordGuesser({
   }, [handleKeyDown, handleKeyUp]);
 
   return (
-    <Card
-      className="p-3 focus:outline-none"
-      onClick={() => {
-        if (gameState === "playing") inputRef.current?.focus();
-      }}
-    >
-      <h1 className="text-4xl font-bold">Guess the Word</h1>
-      <section className="flex flex-col items-center gap-1 p-2">
-        <input
-          type="text"
-          className="h-0 opacity-0"
-          ref={inputRef}
-          onChange={(e) => {
-            e.preventDefault();
-            e.target.value = "";
-          }}
-        />
-        {Array.from({ length: NUMBER_OF_ATTEMPTS }, (_, i) => (
-          <div
-            key={i}
-            className={
-              alertingInvalidInput && i === guesses.length
-                ? "animate-[wiggle_0.5s_ease-out]"
-                : ""
-            }
-            onAnimationEnd={(e) => {
-              if (e.animationName === "wiggle") {
-                setAlertingInvalidInput(false);
+    <>
+      <Card className="grid place-items-center p-3 focus:outline-none">
+        <h1 className="text-2xl font-bold">Guess the Word</h1>
+        <section className="flex flex-col items-center gap-1 p-2">
+          {Array.from({ length: NUMBER_OF_ATTEMPTS }, (_, i) => (
+            <div
+              key={i}
+              className={
+                alertingInvalidInput && i === guesses.length
+                  ? "animate-[wiggle_0.5s_ease-out]"
+                  : ""
               }
-            }}
-          >
-            {i < guesses.length ? (
-              <WordGuesserInput
-                length={5}
-                value={guesses[i].value}
-                guessResult={guesses[i].result}
-              />
-            ) : i === guesses.length ? (
-              <WordGuesserInput length={5} value={word} active />
-            ) : (
-              <WordGuesserInput length={5} />
-            )}
-          </div>
-        ))}
-      </section>
-      <AlertDialog open={gameState !== "playing"}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {gameState === "lost" ? "You lost..." : "You won!"}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {gameState === "lost"
-                ? "You have used all your attempts. Refresh the page to play again."
-                : "You guessed the word correctly. Come back tomorrow for a new word."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => shareGuessAttempts(guesses)}>
-              Share
-            </AlertDialogAction>
-            <AlertDialogAction onClick={() => location.reload()}>
-              Try Again
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              onAnimationEnd={(e) => {
+                if (e.animationName === "wiggle") {
+                  setAlertingInvalidInput(false);
+                }
+              }}
+            >
+              {i < guesses.length ? (
+                <WordGuesserInput
+                  length={5}
+                  value={guesses[i].value}
+                  guessResult={guesses[i].result}
+                />
+              ) : i === guesses.length ? (
+                <WordGuesserInput length={5} value={word} active />
+              ) : (
+                <WordGuesserInput length={5} />
+              )}
+            </div>
+          ))}
+        </section>
+        <AlertDialog open={gameState !== "playing"}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {gameState === "lost" ? "You lost..." : "You won!"}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {gameState === "lost"
+                  ? "You have used all your attempts. Refresh the page to play again."
+                  : "You guessed the word correctly. Come back tomorrow for a new word."}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={() => shareGuessAttempts(guesses)}>
+                Share
+              </AlertDialogAction>
+              <AlertDialogAction onClick={() => location.reload()}>
+                Try Again
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Card>
+
+      <CustomKeyboard />
 
       <style jsx>{`
         @keyframes wiggle {
@@ -190,6 +178,6 @@ export function WordGuesser({
           }
         }
       `}</style>
-    </Card>
+    </>
   );
 }
