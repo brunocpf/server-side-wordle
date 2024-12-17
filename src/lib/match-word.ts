@@ -16,16 +16,19 @@ export function matchWord(word: string, textToMatch: string) {
       return "yes";
     }
 
+    return "no";
+  });
+
+  for (let i = 0; i < word.length; i++) {
     if (
+      matches[i] === "no" &&
       word.includes(textToMatch[i]) &&
       countPerCharacter[textToMatch[i]] > 0
     ) {
       countPerCharacter[textToMatch[i]] -= 1;
-      return "close";
+      matches[i] = "close";
     }
-
-    return "no";
-  });
+  }
 
   return matches;
 }
