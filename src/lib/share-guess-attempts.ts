@@ -33,5 +33,11 @@ export async function shareGuessAttempts(
     return;
   }
 
-  navigator.share(shareData);
+  try {
+    await navigator.share(shareData);
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      return;
+    }
+  }
 }
