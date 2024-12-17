@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 
@@ -12,6 +13,8 @@ const keyMap = {
 };
 
 export function CustomKeyboard() {
+  const [loading, setLoading] = useState(true);
+
   const handleKeyReleased = (button: string) => {
     const key =
       button in keyMap ? keyMap[button as keyof typeof keyMap] : button;
@@ -25,8 +28,14 @@ export function CustomKeyboard() {
 
   return (
     <Card className="mt-3 flex bg-gray-100 p-1 dark:bg-zinc-900 dark:[&_.hg-button]:!border-black dark:[&_.hg-button]:!bg-zinc-600 dark:active:[&_.hg-button]:!bg-zinc-500 [&_.keyboard-theme]:bg-transparent">
+      {loading && (
+        <div className="absolute inset-0 grid place-items-center bg-gray-100 dark:bg-zinc-900">
+          <div className="h-20 w-20 animate-spin rounded-full border-b-2 border-t-2 border-zinc-400 dark:border-zinc-800"></div>
+        </div>
+      )}
       <div>
         <Keyboard
+          onInit={() => setLoading(false)}
           theme={"hg-theme-default hg-layout-default keyboard-theme"}
           layout={{
             default: [

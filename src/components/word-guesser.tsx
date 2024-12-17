@@ -137,12 +137,16 @@ export function WordGuesser({
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>
-                {gameState === "lost" ? "You lost..." : "You won!"}
+                {gameState === "lost" ? "You lost..." : "You won! 🎉"}
               </AlertDialogTitle>
               <AlertDialogDescription>
-                {gameState === "lost"
-                  ? "You have used all your attempts. Refresh the page to play again."
-                  : "You guessed the word correctly. Come back tomorrow for a new word."}
+                {
+                  {
+                    playing: "You have 6 attempts to guess the word.",
+                    won: "You found the word of the day! Come back tomorrow for a new word.",
+                    lost: "You have used all your attempts. Refresh the page to play again.",
+                  }[gameState]
+                }
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
